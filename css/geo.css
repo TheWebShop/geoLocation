@@ -7,3 +7,29 @@
 	height:560px;
 	width:400px;
 }
+
+@-webkit-keyframes pulse{
+
+	0% {
+		opacity: 1.0;
+		-webkit-transform: scale(1.00);
+	}
+
+	40%{
+
+		opacity: 0.25;
+		-webkit-transform: scale(0.85);
+	}
+
+	100% {
+		opacity: 0.1;
+		-webkit-transform: scale(3.50);
+	}
+}
+
+#mapcanvas div[title="You are here"] {
+	-webkit-animation-name: pulse;
+	-webkit-animation-duration: 1.5s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: ease-in-out;
+}

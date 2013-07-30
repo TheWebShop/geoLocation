@@ -14,14 +14,20 @@
 			});
 
 			var watchProcess = null;
+			var map;
+			var mapmarker;
 			
 			function initiate_watchlocation(){
 				if(watchProcess == null){
 					
+					map = mapCanvas();
+
 					if(navigator.geolocation)
 						watchProcess = navigator.geolocation.watchPosition(handle_geolocation_query, handle_errors)
 					else
 						yqlgeo.get('visitor', normalize_yql_response);
+
+
 
 				}
 			}
@@ -79,18 +85,20 @@
 				handle_geolocation_query(position)
 
 			}
-			function handle_geolocation_query(position){
-				var text = "Latitude: " + position.coords.latitude + "<br/>" +
-							"Longitude " + position.coords.longitude + "<br/>" + 
-							"Accuracy: " + position.coords.accuracy + "m<br/>" + 
-							"Time: " + new Date(position.timestamp);
-				$("#status").html(text).addClass('success');
-			
+
+			function mapCanvas(){
 				var mapcanvas = $("<div id='mapcanvas' class='mapClass'></div>");
+				var latlng = new google.maps.LatLng(48.4228527, -123.36852160000001);
+				var image = new google.maps.MarkerImage(
+						'./images/bluedot.png',
+						null,
+						null,
+						new google.maps.Point( 8, 8 ),
+						new google.maps.Size( 17, 17 )
+					);
 
 				$("article").append(mapcanvas);
 
-				var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 				var myOptions = {
 					zoom: 15,
 					center: latlng,
@@ -101,11 +109,31 @@
 
 				var map = new google.maps.Map(mapcanvas[0], myOptions);
 
-				var marker = new google.maps.Marker({
+				mapmarker = new google.maps.Marker({
+					flat: true,
+					icon: image,
 					position: latlng,
-					map: map,
-					title: "I'm here! (at least within a " + position.coords.accuracy + " meter radius"
-				});
+					map: map, 
+					optimized: false,
+					title: "You are here",
+					visible: true
+
+				});	
+
+				return map;
+			}
+
+			function handle_geolocation_query(position){
+				var text = "Latitude: " + position.coords.latitude + "<br/>" +
+							"Longitude " + position.coords.longitude + "<br/>" + 
+							"Accuracy: " + position.coords.accuracy + "m<br/>" + 
+							"Time: " + new Date(position.timestamp);
+				$("#status").html(text).addClass('success');
+			
+				var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);		
+
+				mapmarker.setPosition(latlng);
+				map.panTo(latlng);
 
 			}
 
